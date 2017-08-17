@@ -1,5 +1,6 @@
 #ifndef UARTInit
-#endif UARTInit
+
+#define UARTInit
 
 #define  EVEN 0
 #define  ODD 1
@@ -32,6 +33,13 @@ void TransmitString(unsigned char *s)
 	TransmitUART0(13);
 }
 
+void send_int_Uart(unsigned int c)//	Отправка числа от 0000 до 9999
+{
+	char buffer[8];
+	itoa(c, buffer, 10);
+	TransmitString(buffer);
+}
+
 void InitializeUART0(int Baud, char AsyncDoubleSpeed, char DataSizeInBits, char ParityEVEorODD, char StopBits)
 {
 	uint16_t UBBRValue = lrint( F_CPU / 16L / Baud ) - 1;
@@ -56,3 +64,5 @@ void InitializeUART0(int Baud, char AsyncDoubleSpeed, char DataSizeInBits, char 
 	if (DataSizeInBits == 8) UCSR0C |= (3 << UCSZ00); // 8 bit data length
 	if (DataSizeInBits == 9) UCSR0C |= (7 << UCSZ00); // 9 bit data length
 }
+
+#endif UARTInit
