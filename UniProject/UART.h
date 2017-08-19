@@ -5,6 +5,8 @@
 #define  EVEN 0
 #define  ODD 1
 
+#define RETURN_NEWLINE "\r\n"
+
 #include <math.h>
 #include <avr/io.h>
 
@@ -26,17 +28,23 @@ void TransmitUART0(unsigned char data)
 	UDR0 = data;
 }
 
-void TransmitString(unsigned char *s)
+void returnNewLine()
 {
-	while (*s != 0) TransmitUART0(*s++);
 	TransmitUART0(10);
 	TransmitUART0(13);
 }
 
-void send_int_Uart(unsigned int c)//	Отправка числа от 0000 до 9999
+void TransmitString(unsigned char *s)
 {
-	char buffer[8];
-	itoa(c, buffer, 10);
+	while (*s != 0) TransmitUART0(*s++);
+	returnNewLine();
+}
+
+void send_int_Uart(uint32_t c)
+{
+	char buffer[9];
+	sprintf(buffer, "%lu", c);
+	//itoa(c, buffer, 10);
 	TransmitString(buffer);
 }
 
@@ -51,7 +59,7 @@ void InitializeUART0(int Baud, char AsyncDoubleSpeed, char DataSizeInBits, char 
 	
 	UBRR0L = UBBRValue;
 	//Enable the receiver and transmitter
-	UCSR0B = (1 << RXEN0) | (1 << TXEN0);
+	UCSR0B = ( 1 << RXCIE0 ) |(1 << RXEN0) | (1 << TXEN0);
 	
 	//set 2 stop bits
 	if (StopBits == 2) UCSR0C = (1 << USBS0);
