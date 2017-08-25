@@ -41,9 +41,14 @@ void TransmitString(unsigned char *s)
 }
 
 void send_int_Uart(uint32_t c)
+//void send_int_Uart(float c)
 {
-	char buffer[9];
+	char buffer[12];
+	//int tmpInt1 = c;
+	//double tmpFrac = c - tmpInt1;
+	//int tmpInt2 = trunc(tmpFrac * 1000);
 	sprintf(buffer, "%lu", c);
+	//sprintf (buffer, "c = %d.%03d", tmpInt1, tmpInt2);
 	//itoa(c, buffer, 10);
 	TransmitString(buffer);
 }
