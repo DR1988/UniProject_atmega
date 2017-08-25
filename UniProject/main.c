@@ -92,95 +92,38 @@ ISR(TIMER5_CAPT_vect)
 	sei();
 }
 
-int sender = 0;
-uint32_t currentRPM = 0 ;
 ISR(INT3_vect)
 {
-	//TransmitString("asd");
 	RPM_1.counter++;
 	if(RPM_1.counter >= 10) {
-		Timer5_1.totalTicks += Timer5_1.counter * 65535 + TCNT5;
+		Timer5_1.totalTicks += Timer5_1.counter * 64000 + TCNT5;
 		/*** current RPM ***\
 		RPM.counter - interruption count on PD3
-		totalTicks - how much cpu ticks done per 10 interruption
+		totalTicks - how much CPU ticks done per 10 interruption
 		multiply by 10 - now we now frequency of hall sensors signal
 		multiply by 60 - per minute
 		division by 4 - number of poles on engine - 8 => real revolution = 4 magnetic field revolutions
 										(so, hall sensors will be detect it 4 times per real(mechanical) revolution) 
 		division by 4 - interruption works on rise and fall => 10 * 60 / 4 / 2 = 75
 		\****************/
-		currentRPM = F_CPU * 75 /* 10 */ / Timer5_1.totalTicks /* * 60 / 4 / 2 */ ;
+		RPM_1.currentRPM = F_CPU * 75 /* 10 */ / Timer5_1.totalTicks /* * 60 / 4 / 2 */ ;
 		RPM_1.counter = 0;
 		Timer5_1.counter = 0;
 		Timer5_1.totalTicks = 0;
-		 TCNT5 = 0;
+		TCNT5 = 1535;
 	}
-	;
-	sender++;
-	if (sender > 500) {
-		send_int_Uart(currentRPM);
-		sender = 0;
-	}
-	//if (Timer5_1.captureFirst != 0)
-	//{
-		//Timer5_1.captureSecond = Timer5_1.captureFirst;
-		//Timer5_1.captureFirst = TCNT5;
-	//}
-	//else
-	//{
-		//Timer5_1.captureFirst = TCNT5;
-	//}
-	//if (Timer5_1.captureFirst + Timer5_1.captureSecond > 64000)
-	//{
-		//Timer5_1.counter++;
-		//Timer5_1.totalTicks += Timer5_1.counter * 64000 + abs(Timer5_1.captureFirst - Timer5_1.captureSecond);
-	//}
-	//else
-	//{
-		//Timer5_1.totalTicks += Timer5_1.counter * 64000 + Timer5_1.captureFirst + Timer5_1.captureSecond;
-	//}
-	//send_int_Uart(F_CPU / Timer5_1.totalTicks * 3 *4);
-	//Timer5_1.totalTicks = Timer5_1.counter * 64000 + TCNT5;
-	//PORTH ^= (1 << PH4);
+	
 }
 
 ISR(TIMER5_OVF_vect)
 {
-	//if(Timer5_1.totalTicks == 0 && PWM4C.pwmValue == 0) {
-		//PWM4C.pwmValue = 2;
-		//setPwm(PWM4C.pwmValue);
-	//}
+	TCNT5 = 1535;
 	Timer5_1.counter++;
-	//send_int_Uart(RPM_1.counter);
-	//if (RPM_1.counter >= 10){
-		//send_int_Uart(Timer5_1.totalTicks);
-		//Timer5_1.totalTicks = 0;
-		//Timer5_1.counter = 0;
-		//RPM_1.counter = 0;
-	//}
-	//TCNT5 = 1535;
-	//////Timer5_1.secondCounts++;
-	
-	//if(++Timer5_1.seconds >= 250){
-		////if (F_CPU / Timer5_1.totalTicks * 3 * 4 < setRPM) {
-			////TransmitString("+");
-			////setPwm(PWM4C.pwmValue += 0.5);
-		////send_int_Uart(PWM4C.pwmValue);
-			////} else if (F_CPU / Timer5_1.totalTicks * 3 * 4 > setRPM) {
-			////TransmitString("-");
-			////setPwm(PWM4C.pwmValue -= 0.5);
-		////}
-		//PORTH ^= (1 << PH4);
-		//Timer5_1.seconds = 0;
-		//send_int_Uart( RPM_1.counter * 60 / 4 / 2  /* / RPM_1.counter / 100 * 3 * 4 */);
-		////send_int_Uart( F_CPU / Timer5_1.totalTicks /* / RPM_1.counter / 100 * 3 * 4 */);
-		//Timer5_1.counter = 0;
-		//RPM_1.counter = 0;
-		//Timer5_1.totalTicks = 0;
-		////send_int_Uart(counter * 4 * 3);
-		////counter=0;
-	//}
-	
+	if(++Timer5_1.seconds >= 125){
+		Timer5_1.seconds = 0;
+		send_int_Uart(RPM_1.currentRPM);
+	}
+		
 	//PORTH ^= (1 << PH4);
 }
 
