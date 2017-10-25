@@ -16,12 +16,14 @@ void setPwm(double Pwm){
 	if (Pwm <= 100)
 	{
 		OCR4A = (uint16_t) ICR4 * 0.01 * Pwm;
-	} else {
+	} else if (Pwm <= 0) {
+		OCR4A = 0;
+	} else if (Pwm > 100) {
 		OCR4A = 0;
 	}
 }
 
-void InitializePWM_4C( uint32_t Frequency, int Pwm )
+void InitializePWM_4C( uint32_t Frequency, double Pwm )
 {
 	TCCR4B = 0x00;
 	DDRH |= ( 1 << PH3 );
