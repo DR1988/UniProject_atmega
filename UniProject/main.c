@@ -21,7 +21,7 @@ volatile struct UARTData {
 	volatile unsigned char dataCount;
 	volatile unsigned char sendingTrue;
 };
-dd='a';
+
 volatile struct PWM {
 	volatile uint16_t pwmFrequency;
 	volatile double pwmValue;
@@ -95,26 +95,26 @@ void decodeCommands(unsigned char commands[])
 
 int main(void)
 {
-	DDRH |= (1 << DDH4);
-	PORTH |=  (1 << PH4);
-	
-	//DDRD |= (0 << DDD4);
-	PORTD |= (1 << PD3);
-	
-  TIMSK5 |= (1 << TOIE5);
-	TCCR5B = (1 << CS50);
-  TCNT5 = 1535;
+	//DDRH |= (1 << DDH4);
+	//PORTH |=  (1 << PH4);
 	//
-	TIMSK0 |= (1 << TOIE0);
-	TCCR0B = (1 << CS02) | (1 << CS00);
-	TCNT0 = 130;
+	////DDRD |= (0 << DDD4);
+	//PORTD |= (1 << PD3);
 	//
-	EICRA |= (0 << ISC31) | (1 << ISC30);
-	EIMSK |= (1 << INT3);
+  //TIMSK5 |= (1 << TOIE5);
+	//TCCR5B = (1 << CS50);
+  //TCNT5 = 1535;
+	////
+	//TIMSK0 |= (1 << TOIE0);
+	//TCCR0B = (1 << CS02) | (1 << CS00);
+	//TCNT0 = 130;
+	////
+	//EICRA |= (0 << ISC31) | (1 << ISC30);
+	//EIMSK |= (1 << INT3);
 
 	sei();
-	InitializeUART0(250000, 0, 8, 0, 0);
-	InitializePWM_4C(PWM4C.pwmFrequency, PWM4C.pwmValue);
+	//InitializeUART0(250000, 0, 8, 0, 0);
+	//InitializePWM_4C(PWM4C.pwmFrequency, PWM4C.pwmValue);
 	//strlcpy();
 
 	/* Replace with your application code */
@@ -146,7 +146,6 @@ ISR(INT3_vect)
 	}
 	
 }
-
 
 ISR(TIMER5_OVF_vect)
 {
@@ -185,7 +184,6 @@ ISR(TIMER0_OVF_vect){
 		}
 	}
 }
-
 
 ISR (USART0_RX_vect)
 {
