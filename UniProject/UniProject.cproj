@@ -126,12 +126,22 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Servo_init\Servo_1.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="TimerCounter.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Timers\Timer5.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="UART.h">
       <SubType>compile</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Timers" />
+    <Folder Include="Servo_init" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

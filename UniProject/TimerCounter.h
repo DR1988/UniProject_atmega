@@ -9,7 +9,7 @@
 #ifndef TIMERCOUNTER_H_
 #define TIMERCOUNTER_H_
 
-#define F_CPU 16000000UL
+
 #include <math.h>
 
 void initializeTimerCounter()

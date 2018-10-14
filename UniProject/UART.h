@@ -31,7 +31,7 @@ void TransmitUART0(unsigned char data)
 void returnNewLine()
 {
 	TransmitUART0(10);
-	//TransmitUART0(13);
+	TransmitUART0(13);
 }
 
 void TransmitString(unsigned char *s)
