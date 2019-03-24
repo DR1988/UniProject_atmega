@@ -13,32 +13,34 @@
 
 #include <stdbool.h>
 
-void StopServo_1(){
+void StopServo_0(){
 	DDRG &= ~(1 << PG5);
 }
 
-void LaunchServo_1(){
+void _launchServo_0(){
 	DDRG |= (1 << PG5);
 }
 
 void _setToOpenPosition() {
 	OCR0B=33;
-	LaunchServo_1();
+	_launchServo_0();
 }
 
-bool checkServo_1_ForMoving() {
+bool checkServo_0_ForMoving() {
 	return PINK & (1<<PK7);
 }
 
-void closeValve_1() {
+void closeValve_0() {
 	OCR0B = 20;
+	_launchServo_0();
 }
 
-void openValve_1() {
+void openValve_0() {
 	OCR0B = 34;
+	_launchServo_0();
 }
 
-void InitializeServo_1()
+void InitializeServo_0()
 {
 	DDRG &= ~(1 << PG5); // set PG5 to zero
 	//DDRG |= (1 << PG5);

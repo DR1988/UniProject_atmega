@@ -126,7 +126,7 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Servo_init\Servo_1.h">
+    <Compile Include="Servo_init\Servo_0.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="TimerCounter.h">

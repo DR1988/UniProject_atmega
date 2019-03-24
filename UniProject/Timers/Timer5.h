@@ -16,7 +16,7 @@ void TCNT5_startingValue(unsigned int value) {
 void initializeTimerCounter_5()
 {
 	TIMSK5 |= (1 << TOIE5);
-	TCCR5B = (1 << CS50); 
+	TCCR5B = (1 << CS50); // doesnt increase countsec value - should change CS50 to CS51 or smth else 
 	TCNT5_startingValue(1535);
 }
 
