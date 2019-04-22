@@ -8,14 +8,18 @@
 #include <avr/io.h>
 #include <stdio.h>
 #include <avr/interrupt.h>
-#include <util/delay.h>
+
 
 #include "UART.h"
 #include "PWMInit.h"
 #include "Servo_init/Servo_0.h"
+#include "Servo_init/Servo_1.h"
 #include "Timers/Timer5.h"
+#include "Valves/valves.h"
 	
 #define F_CPU 16000000UL
+
+#include <util/delay.h>
 
 struct UARTData {
 	volatile unsigned char data_in[28];
@@ -51,13 +55,13 @@ struct PID {
 	};
 
 volatile struct UARTData UART0 = {.dataCount = 0, .sendingTrue = 0};
-volatile struct PWM PWM4C = {.pwmFrequency = 1000, .pwmValue = 5};
+volatile struct PWM PWM4C = {.pwmFrequency = 1000, .pwmValue = 15};
 volatile struct TIMER5 Timer5_1 = {.counter = 0, .captureFirst = 0, .captureSecond = 0, .seconds = 0, .totalTicks = 0 };
-volatile struct RPM RPM_1 = {.currentRPM = 0, .setRPM = 0, .counter = 0, .interruptionCounter = 10};
+volatile struct RPM RPM_1 = {.currentRPM = 0, .setRPM = 500, .counter = 0, .interruptionCounter = 10};
 
 char sendinComands = 0;
 
-void decodeCommands(unsigned char commands[])
+void decodeCommands(volatile unsigned char commands[])
 {
 	unsigned int i = 0;
 	unsigned int j = 0;
@@ -72,27 +76,72 @@ void decodeCommands(unsigned char commands[])
 				j++;
 			}
 			sscanf(tempBuf, "%d", &extractedValue);
-			send_int_Uart(extractedValue);
+			//send_int_Uart(extractedValue);
 			RPM_1.setRPM = extractedValue;
 			//send_int_Uart();
 			//TransmitString(commands);
 			//extractValue(*commands++);
 		}
-		//if(commands[i] == 'V' && commands[i + 1] == '0') {
-			//i = i + 2;
-			//if(commands[i] == 'Y')
-			//{
-				//TransmitString("Close");
-				//closeValve_0();
-				//// PORTH |= (1 << PH4);
-			//}
-			//if(commands[i] == 'N'){
-				//TransmitString("Open");
-				//openValve_0();
-				//// PORTH &= ~(1 << PH4);
-			//}
-		//}
-		
+		if(commands[i] == 'V' && commands[i + 1] == '0') {
+			i = i + 2;
+			if(commands[i] == 'Y')
+			{
+				VALVES.openV1();
+			}
+			if(commands[i] == 'N'){
+				VALVES.closeV1();
+			}
+		}
+		if(commands[i] == 'V' && commands[i + 1] == '1') {
+			i = i + 2;
+			if(commands[i] == 'Y')
+			{
+				VALVES.openV2();
+			}
+			if(commands[i] == 'N'){
+				VALVES.closeV2();
+			}
+		}
+		if(commands[i] == 'V' && commands[i + 1] == '2') {
+			i = i + 2;
+			if(commands[i] == 'Y')
+			{
+				VALVES.openV3();
+			}
+			if(commands[i] == 'N'){
+				VALVES.closeV3();
+			}
+		}
+		if(commands[i] == 'V' && commands[i + 1] == '3') {
+			i = i + 2;
+			if(commands[i] == 'Y')
+			{
+				VALVES.openV4();
+			}
+			if(commands[i] == 'N'){
+				VALVES.closeV4();
+			}
+		}
+		if(commands[i] == 'V' && commands[i + 1] == '4') {
+			i = i + 2;
+			if(commands[i] == 'Y')
+			{
+				VALVES.openV5();
+			}
+			if(commands[i] == 'N'){
+				VALVES.closeV5();
+			}
+		}
+		if(commands[i] == 'V' && commands[i + 1] == '5') {
+			i = i + 2;
+			if(commands[i] == 'Y')
+			{
+				VALVES.openV6();
+			}
+			if(commands[i] == 'N'){
+				VALVES.closeV6();
+			}
+		}
 		i++;
 	}
 }
@@ -113,8 +162,8 @@ int main(void)
   //TCNT5 = 1535;
 	////
 	
-	TIMSK0 |= (1 << TOIE0);
-	TCCR0B |= (1 << CS02) | (1 << CS00);
+ 	TIMSK0 |= (1 << TOIE0);
+ 	TCCR0B |= (1 << CS02) | (1 << CS00);
 
 	//TCNT0 = 130;
 	////
@@ -122,11 +171,21 @@ int main(void)
 	EIMSK |= (1 << INT3);
 
 	sei();
+		
 	initializeTimerCounter_5();
 	//InitializeServo_0();
-	InitializeUART0(250000, 0, 8, 0, 0);
+	InitializeServo_0();
+	InitializeUART0(500000, 0, 8, 0, 0);
 	InitializePWM_4C(PWM4C.pwmFrequency, PWM4C.pwmValue);
+	
 	//strlcpy();
+	//DDRF |= (1 << DDF0);
+	//PORTF |= (1 << PF0);
+	
+	initValves();
+	//VL.opnV1();
+	//valves.openValve1();
+//	valves.openValve1();
 
 	/* Replace with your application code */
     while (1) 
@@ -135,30 +194,14 @@ int main(void)
     }
 }
 
-ISR(PCINT2_vect){
+ISR(PCINT0_vect){
 	if (checkServo_0_ForMoving()){
-		PORTA ^= (1<<PA1);
+		PORTA ^= (1<<PA1); // just for show that interruption works
 	} else {
 		StopServo_0();
 	}
 }
 
-
-//ISR (USART0_RX_vect) {
-	//char received = ReceiveUART0();
-	//if(received == '='){
-		//LaunchServo_1();
-		//TransmitUART0(received);
-		//returnNewLine();
-		//closeValve_1();
-	//}
-	//if(received == '-') {
-		//LaunchServo_1();
-		//openValve_1();
-		//TransmitUART0(received);
-		//returnNewLine();
-	//}
-//}
 
 ISR(INT3_vect)
 {
@@ -187,7 +230,7 @@ ISR(INT3_vect)
 
 ISR(TIMER5_OVF_vect)
 {
-	//PORTH ^= (1 << PH4);
+	PORTH ^= (1 << PH4);
 	if(sendinComands == 1)
 	{
 		decodeCommands(UART0.data_in);
@@ -199,24 +242,20 @@ ISR(TIMER5_OVF_vect)
 }
 
 
-
 unsigned int countsec = 0;
 ISR(TIMER0_OVF_vect){
 	//PORTH ^= (1 << PH4);
 	
 	TCNT0 = 131;
-	//send_int_Uart(countsec);
 
-	if(++countsec >= 60){
-		send_int_Uart(RPM_1.setRPM);
-		//PORTH ^= (1 << PH4);
+	if(++countsec >= 125){
+		send_int_Uart(RPM_1.currentRPM);
 		countsec=0;
 	}
 
 	if(++Timer5_1.seconds >= 25){
 		Timer5_1.seconds = 0;
 		if(RPM_1.setRPM <= 10){
-			PORTH ^= (1 << PH4);
 			setPwm(0);
 			RPM_1.currentRPM=0;
 		} else {
@@ -256,28 +295,4 @@ ISR (USART0_RX_vect)
 		} 
 		//++UART0.dataCount;
 	}
-	
-	//if(UART0.data_in[UART0.dataCount] == 'F' ) {
-		//TransmitUART0(65);
-		//sendinComands = 1;
-		//UART0.data_in[++UART0.dataCount] = '\n';
-		////TransmitString(UART0.data_in);
-		//UART0.dataCount = 0;
-	////UART0.data_in[UART0.dataCount] = UDR0;
-	//
-	////if(UART0.data_in[UART0.dataCount] == '\n' ) {
-		////send_int_Uart(5);
-		////UART0.dataCount = 0;
-		////RPM_1.setRPM = 4000;
-	//} else {
-		//++UART0.dataCount;
-	//}
-
-	//if(UDR0 == '+' ) {
-		//setPwm(++PWM4C.pwmValue);
-		////TransmitString(UART0.data_in);
-		////UART0.dataCount = 0;
-		////memset(&UART0.dataCount, 0, sizeof(UART0.dataCount));
-
-	//TransmitString(UART0.data_in);
 }

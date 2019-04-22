@@ -129,6 +129,9 @@
     <Compile Include="Servo_init\Servo_0.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Servo_init\Servo_1.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="TimerCounter.h">
       <SubType>compile</SubType>
     </Compile>
@@ -138,8 +141,15 @@
     <Compile Include="UART.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Valves\valves.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Valves\valves.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Valves" />
     <Folder Include="Timers" />
     <Folder Include="Servo_init" />
   </ItemGroup>
