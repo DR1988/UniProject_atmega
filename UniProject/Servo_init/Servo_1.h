@@ -12,6 +12,7 @@
 #define F_CPU 16000000UL
 
 #include <stdbool.h>
+#include <avr/delay.h>
 
 void StopServo_1(){
 	DDRB &= ~( 1 << DDB4 );
@@ -22,8 +23,10 @@ void _launchServo_1(){
 }
 
 void _setToOpenPosition_1() {
-	OCR2A=33;
+	OCR2A=30;
 	_launchServo_1();
+	_delay_ms(500);
+	OCR2A=45;
 }
 
 bool checkServo_1_ForMoving() {
@@ -36,15 +39,15 @@ void closeValve_1() {
 }
 
 void openValve_1() {
-	OCR2A = 34;
+	OCR2A = 45;
 	_launchServo_1();
 }
 
 void InitializeServo_1()
 {
-	DDRK &= ~(1 << PK7);
-	PCICR |= (1 << PCIE2);
-	PCMSK2 |= (1 << PCINT23);
+	DDRK &= ~(1 << PB6);
+	PCICR |= (1 << PCIE0);
+	PCMSK0 |= (1 << PCINT6);
 	
  	DDRB &= ~( 1 << DDB4 );
  	//DDRB |= ( 1 << DDB4 );

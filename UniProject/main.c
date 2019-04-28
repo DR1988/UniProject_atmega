@@ -142,6 +142,26 @@ void decodeCommands(volatile unsigned char commands[])
 				VALVES.closeV6();
 			}
 		}
+		if(commands[i] == 'V' && commands[i + 1] == '6') {
+			i = i + 2;
+			if(commands[i] == 'Y')
+			{
+				openValve_0();
+			}
+			if(commands[i] == 'N'){
+				closeValve_0();
+			}
+		}
+		if(commands[i] == 'V' && commands[i + 1] == '7') {
+			i = i + 2;
+			if(commands[i] == 'Y')
+			{
+				openValve_1();
+			}
+			if(commands[i] == 'N'){
+				closeValve_1();
+			}
+		}
 		i++;
 	}
 }
@@ -171,10 +191,11 @@ int main(void)
 	EIMSK |= (1 << INT3);
 
 	sei();
-		
+	
 	initializeTimerCounter_5();
 	//InitializeServo_0();
 	InitializeServo_0();
+	InitializeServo_1();
 	InitializeUART0(500000, 0, 8, 0, 0);
 	InitializePWM_4C(PWM4C.pwmFrequency, PWM4C.pwmValue);
 	
@@ -199,6 +220,11 @@ ISR(PCINT0_vect){
 		PORTA ^= (1<<PA1); // just for show that interruption works
 	} else {
 		StopServo_0();
+	}
+	if(checkServo_1_ForMoving()){
+		PORTA ^= (1<<PA1); // just for show that interruption works
+	} else{
+		StopServo_1();
 	}
 }
 

@@ -9,11 +9,25 @@
 #ifndef SERVO_0_H_
 #define SERVO_0_H_
 
+#define SERVO_0_OPEN 45
+#define SERVO_0_CLOSE 20
+
 #define F_CPU 16000000UL
 
 #include <stdbool.h>
+#include <avr/delay.h>
+
+
+int servo_0_counts = 0;
+int servo_0_moving = 0;
 
 void StopServo_0(){
+	if(servo_0_moving == SERVO_0_OPEN){
+		send_int_Uart(11);
+	} else if(servo_0_moving == SERVO_0_CLOSE){
+		send_int_Uart(22);
+	}
+		
 	DDRH &= ~( 1 << PH6 );
 }
 
@@ -22,8 +36,11 @@ void _launchServo_0(){
 }
 
 void _setToOpenPosition_0() {
-	OCR2B=33;
+	//OCR2B=30;
 	_launchServo_0();
+	//_delay_ms(500);
+	OCR2B=SERVO_0_OPEN;
+	servo_0_moving=SERVO_0_OPEN;
 }
 
 bool checkServo_0_ForMoving() {
@@ -31,12 +48,14 @@ bool checkServo_0_ForMoving() {
 }
 
 void closeValve_0() {
-	OCR2B = 20;
+	OCR2B = SERVO_0_CLOSE;
+	servo_0_moving=SERVO_0_CLOSE;
 	_launchServo_0();
 }
 
 void openValve_0() {
-	OCR2B = 34;
+	OCR2B = SERVO_0_OPEN;
+	servo_0_moving=SERVO_0_OPEN;
 	_launchServo_0();
 }
 
