@@ -9,25 +9,18 @@
 #ifndef SERVO_0_H_
 #define SERVO_0_H_
 
-#define SERVO_0_OPEN 45
+#define SERVO_0_OPEN 40
 #define SERVO_0_CLOSE 20
 
 #define F_CPU 16000000UL
 
 #include <stdbool.h>
-#include <avr/delay.h>
+#include <avr/cpufunc.h>
+#include "../Timers/Timer3.h"
 
-
-int servo_0_counts = 0;
-int servo_0_moving = 0;
+bool is_Servo_0_Open = true;
 
 void StopServo_0(){
-	if(servo_0_moving == SERVO_0_OPEN){
-		send_int_Uart(11);
-	} else if(servo_0_moving == SERVO_0_CLOSE){
-		send_int_Uart(22);
-	}
-		
 	DDRH &= ~( 1 << PH6 );
 }
 
@@ -36,27 +29,32 @@ void _launchServo_0(){
 }
 
 void _setToOpenPosition_0() {
-	//OCR2B=30;
+	OCR2B=26;
 	_launchServo_0();
-	//_delay_ms(500);
-	OCR2B=SERVO_0_OPEN;
-	servo_0_moving=SERVO_0_OPEN;
+	launch_timer_3();
+	//OCR2B=SERVO_0_OPEN;
 }
 
 bool checkServo_0_ForMoving() {
+	_NOP();
 	return PINB & (1<<PB7);
 }
 
 void closeValve_0() {
 	OCR2B = SERVO_0_CLOSE;
-	servo_0_moving=SERVO_0_CLOSE;
+	is_Servo_0_Open=false;
 	_launchServo_0();
 }
 
 void openValve_0() {
 	OCR2B = SERVO_0_OPEN;
-	servo_0_moving=SERVO_0_OPEN;
+	is_Servo_0_Open=true;
 	_launchServo_0();
+}
+
+void button_interruption_3_init(){
+	PCICR |= (1 << PCIE0);
+	PCMSK0 |= (1 << PCINT7);
 }
 
 void InitializeServo_0()
@@ -72,8 +70,6 @@ void InitializeServo_0()
 	//
 	//// need using interruption to detect shaft positions 
 	DDRB &= ~(1 << PB7);
-	PCICR |= (1 << PCIE0);
-	PCMSK0 |= (1 << PCINT7);
 	
  	DDRH &= ~( 1 << PH6 );
 // 	DDRH |= ( 1 << DDH6 );
@@ -81,7 +77,15 @@ void InitializeServo_0()
  	TCCR2B |=  ( 1 << CS20 ) | ( 1 << CS21 )  | (1 << CS22) ;
  	//OCR2B = 16;
 	_setToOpenPosition_0();
-	
+}
+
+
+ISR(TIMER3_OVF_vect){
+	openValve_0();
+	stop_timer_3();
+	button_interruption_3_init();
+	//reset_timer3_to_starting_value();
+	//PORTF ^= (1 << PF2);
 }
 
 

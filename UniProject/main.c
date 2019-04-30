@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <avr/interrupt.h>
 
-
 #include "UART.h"
 #include "PWMInit.h"
 #include "Servo_init/Servo_0.h"
@@ -18,11 +17,11 @@
 #include "Valves/valves.h"
 	
 #define F_CPU 16000000UL
-
+#define UART_data_in_length 45
 #include <util/delay.h>
 
 struct UARTData {
-	volatile unsigned char data_in[28];
+	volatile unsigned char data_in[UART_data_in_length];
 	volatile unsigned char data_out[8];
 	volatile unsigned char dataCount;
 	volatile unsigned char sendingTrue;
@@ -52,12 +51,12 @@ struct PID {
 	volatile double proportional;
 	volatile double integral;
 	volatile double differational;
-	};
+	}; 
 
 volatile struct UARTData UART0 = {.dataCount = 0, .sendingTrue = 0};
-volatile struct PWM PWM4C = {.pwmFrequency = 1000, .pwmValue = 15};
+volatile struct PWM PWM4C = {.pwmFrequency = 1000, .pwmValue = 0};
 volatile struct TIMER5 Timer5_1 = {.counter = 0, .captureFirst = 0, .captureSecond = 0, .seconds = 0, .totalTicks = 0 };
-volatile struct RPM RPM_1 = {.currentRPM = 0, .setRPM = 500, .counter = 0, .interruptionCounter = 10};
+volatile struct RPM RPM_1 = {.currentRPM = 0, .setRPM = 0, .counter = 0, .interruptionCounter = 10};
 
 char sendinComands = 0;
 
@@ -68,6 +67,10 @@ void decodeCommands(volatile unsigned char commands[])
 	unsigned char tempBuf[10];
 	unsigned int extractedValue;
 	while(commands[i] != '\n') {
+		// stop command from control program
+		if (commands[i] == 'S'){
+			RPM_1.setRPM = 0;
+		}
 		if(commands[i] == 'R' && commands[i + 1] == '8') {
 			i = i + 2;
 			while(commands[i] != '|'){
@@ -170,6 +173,7 @@ int main(void)
 {
 		
 	DDRA |= (1 << PA1);
+	DDRF |= (1 << DDF2);
 	
 	DDRH |= (1 << DDH4);
 	//PORTH |=  (1 << PH4);
@@ -191,9 +195,7 @@ int main(void)
 	EIMSK |= (1 << INT3);
 
 	sei();
-	
 	initializeTimerCounter_5();
-	//InitializeServo_0();
 	InitializeServo_0();
 	InitializeServo_1();
 	InitializeUART0(500000, 0, 8, 0, 0);
@@ -215,14 +217,15 @@ int main(void)
     }
 }
 
+
 ISR(PCINT0_vect){
 	if (checkServo_0_ForMoving()){
-		PORTA ^= (1<<PA1); // just for show that interruption works
+		//PORTA ^= (1<<PA1); // just for show that interruption works
 	} else {
 		StopServo_0();
 	}
 	if(checkServo_1_ForMoving()){
-		PORTA ^= (1<<PA1); // just for show that interruption works
+		//PORTA ^= (1<<PA1); // just for show that interruption works
 	} else{
 		StopServo_1();
 	}
@@ -275,7 +278,7 @@ ISR(TIMER0_OVF_vect){
 	TCNT0 = 131;
 
 	if(++countsec >= 125){
-		send_int_Uart(RPM_1.currentRPM);
+		//send_int_Uart(RPM_1.currentRPM);
 		countsec=0;
 	}
 
@@ -316,7 +319,7 @@ ISR (USART0_RX_vect)
 		//UART0.dataCount = 0;
 		//UART0.sendingTrue=1;
 	} else {
-		if(++UART0.dataCount >= 28){
+		if(++UART0.dataCount >= UART_data_in_length){
 			 UART0.dataCount = 0;
 		} 
 		//++UART0.dataCount;
