@@ -13,6 +13,7 @@ void launch_timer_1();
 
 void stop_timer_1();
 
+void launch_timer_1_for2_seconds();
 
 
 

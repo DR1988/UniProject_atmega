@@ -17,8 +17,8 @@ static void openValve2(){
 }
 
 static void openValve3(){
-	DDRF |= (1 << DDF5);
-	PORTF |= (1 << PF5);
+	DDRF |= (1 << DDF4);
+	PORTF |= (1 << PF4);
 }
 
 static void openValve4(){
@@ -36,6 +36,16 @@ static void openValve6(){
 	PORTK |= (1 << PK7);
 }
 
+static void openValve7(){
+	DDRK |= (1 << DDK4);
+	PORTK |= (1 << PF4);
+}
+
+static void openValve8(){
+	DDRK |= (1 << DDK5);
+	PORTK |= (1 << PK5);
+}
+
 static void closeValve1(){
 	DDRF &= ~(1 << DDF0);
 	PORTF &= ~(1 << PF0);
@@ -47,8 +57,8 @@ static void closeValve2(){
 }
 
 static void closeValve3(){
-	DDRF &= ~(1 << DDF5);
-	PORTF &= ~(1 << PF5);
+	DDRF &= ~(1 << DDF4);
+	PORTF &= ~(1 << PF4);
 }
 
 static void closeValve4(){
@@ -66,6 +76,16 @@ static void closeValve6(){
 	PORTK &= ~(1 << PK7);
 }
 
+static void closeValve7(){
+	DDRK &= ~(1 << DDK4);
+	PORTK &= ~(1 << PF4);
+}
+
+static void closeValve8(){
+	DDRK &= ~(1 << DDK5);
+	PORTK &= ~(1 << PK5);
+}
+
 
 struct Valves {
 	void (*openV1)();
@@ -74,12 +94,16 @@ struct Valves {
 	void (*openV4)();
 	void (*openV5)();
 	void (*openV6)();
+	void (*openV7)();
+	void (*openV8)();
 	void (*closeV1)();
 	void (*closeV2)();
 	void (*closeV3)();
 	void (*closeV4)();
 	void (*closeV5)();
 	void (*closeV6)();
+	void (*closeV7)();
+	void (*closeV8)();
 } VALVES;
 
 int initValves(void){
@@ -89,11 +113,15 @@ int initValves(void){
 	VALVES.openV4 = openValve4;
 	VALVES.openV5 = openValve5;
 	VALVES.openV6 = openValve6;
+	VALVES.openV7 = openValve7;
+	VALVES.openV8 = openValve8;
 	VALVES.closeV1 = closeValve1;
 	VALVES.closeV2 = closeValve2;
 	VALVES.closeV3 = closeValve3;
 	VALVES.closeV4 = closeValve4;
 	VALVES.closeV5 = closeValve5;
 	VALVES.closeV6 = closeValve6;
+	VALVES.closeV7 = closeValve7;
+	VALVES.closeV8 = closeValve8;
 }
 

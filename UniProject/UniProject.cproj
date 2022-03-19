@@ -34,7 +34,7 @@
         <documentation help="" />
         <offline-documentation help="" />
         <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.34.1" />
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.42.0" />
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
@@ -126,6 +126,18 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Servo_init\Servo_0.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Servo_init\Servo_1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Servo_init\Servo_2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Servo_init\Servo_2.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Servo_init\Servo_0.h">

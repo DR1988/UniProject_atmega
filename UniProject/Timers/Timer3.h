@@ -13,7 +13,7 @@ void launch_timer_3();
 
 void stop_timer_3();
 
-
+void launch_timer_3_for2_seconds();
 
 
 #endif /* TIMER3_H_ */

@@ -13,6 +13,7 @@
 #include "PWMInit.h"
 #include "Servo_init/Servo_0.h"
 #include "Servo_init/Servo_1.h"
+#include "Servo_init/Servo_2.h"
 #include "Timers/Timer5.h"
 #include "Valves/valves.h"
 	
@@ -165,26 +166,29 @@ void decodeCommands(volatile unsigned char commands[])
 				closeValve_1();
 			}
 		}
+		if(commands[i] == 'V' && commands[i + 1] == '8') {
+			i = i + 2;
+			if(commands[i] == 'Y')
+			{
+				openValve_2();
+			}
+			if(commands[i] == 'N'){
+				closeValve_2();
+			}
+		}
 		i++;
 	}
 }
 
 int main(void)
 {
-		
+
 	DDRA |= (1 << PA1);
 	DDRF |= (1 << DDF2);
 	
 	DDRH |= (1 << DDH4);
-	//PORTH |=  (1 << PH4);
-	//	
-	////DDRD |= (0 << DDD4);
-	//PORTD |= (1 << PD3);
-	//
-  //TIMSK5 |= (1 << TOIE5);
-  //TCCR5B = (1 << CS50);
-  //TCNT5 = 1535;
-	////
+	
+	
 	
  	TIMSK0 |= (1 << TOIE0);
  	TCCR0B |= (1 << CS02) | (1 << CS00);
@@ -195,21 +199,23 @@ int main(void)
 	EIMSK |= (1 << INT3);
 
 	sei();
+	
+		
 	initializeTimerCounter_5();
 	InitializeServo_0();
 	InitializeServo_1();
+	InitializeServo_2();
 	InitializeUART0(500000, 0, 8, 0, 0);
 	InitializePWM_4C(PWM4C.pwmFrequency, PWM4C.pwmValue);
-	
-	//strlcpy();
-	//DDRF |= (1 << DDF0);
-	//PORTF |= (1 << PF0);
-	
-	initValves();
-	//VL.opnV1();
-	//valves.openValve1();
-//	valves.openValve1();
 
+	//DDRH |= ( 1 << PH3 );
+	//TCCR4A |= ( 1 << WGM41) | ( 0 << WGM40 ) | ( 1 << COM4A1 ) | ( 0 << COM4A0 );
+	//TCCR4B |= ( 1 << WGM43) | ( 1 << WGM42 ) ;
+	//TCCR4B |= ( 1 << CS42 ) | ( 1 << CS40 ); 
+	//ICR4 = (uint16_t) (F_CPU/1000 / 1024 + 1);
+	//OCR4A=3;
+
+	initValves();
 	/* Replace with your application code */
     while (1) 
     {
@@ -218,22 +224,24 @@ int main(void)
 }
 
 
-ISR(PCINT0_vect){
-	if (checkServo_0_ForMoving()){
-		//PORTA ^= (1<<PA1); // just for show that interruption works
-	} else {
-		StopServo_0();
-	}
-	if(checkServo_1_ForMoving()){
-		//PORTA ^= (1<<PA1); // just for show that interruption works
-	} else{
-		StopServo_1();
-	}
-}
+//ISR(PCINT0_vect){
+	//if (checkServo_0_ForMoving()){
+		////PORTA ^= (1<<PA1); // just for show that interruption works
+		//PORTA |= (1<<PA3);
+	//} else {
+		//StopServo_0();
+	//}
+	//if(checkServo_1_ForMoving()){
+		////PORTA ^= (1<<PA1); // just for show that interruption works
+	//} else{
+		//StopServo_1();
+	//}
+//}
 
 
 ISR(INT3_vect)
 {
+	
 	//PORTH ^= (1 << PH4);
 	RPM_1.counter++;
 	if(RPM_1.counter >= RPM_1.interruptionCounter) {
@@ -259,7 +267,7 @@ ISR(INT3_vect)
 
 ISR(TIMER5_OVF_vect)
 {
-	PORTH ^= (1 << PH4);
+	//PORTA ^= (1<<PA1);
 	if(sendinComands == 1)
 	{
 		decodeCommands(UART0.data_in);
@@ -274,11 +282,12 @@ ISR(TIMER5_OVF_vect)
 unsigned int countsec = 0;
 ISR(TIMER0_OVF_vect){
 	//PORTH ^= (1 << PH4);
-	
+
 	TCNT0 = 131;
 
 	if(++countsec >= 125){
 		//send_int_Uart(RPM_1.currentRPM);
+		TransmitString("CONNECTED");
 		countsec=0;
 	}
 
