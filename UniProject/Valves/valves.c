@@ -27,23 +27,23 @@ static void openValve4(){
 }
 
 static void openValve5(){
-	DDRK |= (1 << DDK6);
-	PORTK |= (1 << PF6);
-}
-
-static void openValve6(){
-	DDRK |= (1 << DDK7);
-	PORTK |= (1 << PK7);
-}
-
-static void openValve7(){
 	DDRK |= (1 << DDK4);
 	PORTK |= (1 << PF4);
 }
 
-static void openValve8(){
+static void openValve6(){
 	DDRK |= (1 << DDK5);
 	PORTK |= (1 << PK5);
+}
+
+static void openValve7(){
+	DDRK |= (1 << DDK6);
+	PORTK |= (1 << PF6);
+}
+
+static void openValve8(){
+	DDRK |= (1 << DDK7);
+	PORTK |= (1 << PK7);
 }
 
 static void closeValve1(){
@@ -67,24 +67,25 @@ static void closeValve4(){
 }
 
 static void closeValve5(){
-	DDRK &= ~(1 << DDK6);
-	PORTK &= ~(1 << PF6);
-}
-
-static void closeValve6(){
-	DDRK &= ~(1 << DDK7);
-	PORTK &= ~(1 << PK7);
-}
-
-static void closeValve7(){
 	DDRK &= ~(1 << DDK4);
 	PORTK &= ~(1 << PF4);
 }
 
-static void closeValve8(){
+static void closeValve6(){
 	DDRK &= ~(1 << DDK5);
 	PORTK &= ~(1 << PK5);
 }
+
+static void closeValve7(){
+	DDRK &= ~(1 << DDK6);
+	PORTK &= ~(1 << PF6);
+}
+
+static void closeValve8(){
+	DDRK &= ~(1 << DDK7);
+	PORTK &= ~(1 << PK7);
+}
+
 
 
 struct Valves {

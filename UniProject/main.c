@@ -81,7 +81,7 @@ void decodeCommands(volatile unsigned char commands[])
 			VALVES.closeV5();
 			VALVES.closeV6();
 		}
-		if(commands[i] == 'R' && commands[i + 1] == '8') {
+		if(commands[i] == 'R' && commands[i + 1] == '9') {
 			i = i + 2;
 			while(commands[i] != '|'){
 				tempBuf[j] = commands[i];
@@ -311,8 +311,6 @@ ISR(TIMER0_OVF_vect){
 			RPM_1.currentRPM = 0;
 			PWM4C.pwmValue = 0;
 		} else if (RPM_1.setRPM > 10) {
-
-			send_int_Uart(RPM_1.currentRPM);
 
 			setPwm(PWM4C.pwmValue += (RPM_1.setRPM - RPM_1.currentRPM) * 0.001);
 
