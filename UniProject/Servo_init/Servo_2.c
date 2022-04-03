@@ -14,8 +14,8 @@
 #include "../Timers/Timer3.h"
 #include "../Servo_init/Servo_2.h"
 
-#define SERVO_2_OPEN 39
-#define SERVO_2_CLOSE 24
+#define SERVO_2_CLOSE 32
+#define SERVO_2_OPEN 14
 
 enum Servo_2_State servo_2_state;
 
@@ -28,7 +28,7 @@ void _launchServo_2(){
 }
 
 void _setToOpenPosition_2() {
-	OCR3A = 30;
+	OCR3A = SERVO_2_OPEN;
 	_launchServo_2();
 	servo_2_state = INITIAL_2_SERVO;
 	launch_timer_1();

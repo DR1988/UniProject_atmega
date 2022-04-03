@@ -24,7 +24,8 @@ void launch_timer_1(){
 }
 
 void launch_timer_1_for2_seconds() {
-	TCNT1 = 0;// with such a prescaler and starting TCNT3 we get 0.5HZ
+	reset_timer1_to_starting_value();
+	//TCNT1 = 0;// with such a prescaler and starting TCNT3 we get 0.5HZ
 	TIMSK1 |= (1 << TOIE1);
 	TCCR1B |= (1 << CS12);
 }

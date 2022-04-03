@@ -13,8 +13,10 @@
 #include "../Timers/Timer1.h"
 #include "../Servo_init/Servo_0.h"
 
-#define SERVO_0_OPEN 39
-#define SERVO_0_CLOSE 24
+// for DS-238HV - frequency 60 HZ and pulse 764us - OCR2A=14 - min - 0 angle
+// 2180us - OCR2A=32 - max - 170 angle
+#define SERVO_0_CLOSE 32
+#define SERVO_0_OPEN 14
 
 enum Servo_0_State servo_0_state;
 
@@ -27,11 +29,10 @@ void _launchServo_0(){
 }
 
 void _setToOpenPosition_0() {
-	OCR2B=30;
+	OCR2B = SERVO_0_OPEN;
 	_launchServo_0();
 	servo_0_state = INITIAL_0_SERVO;
 	launch_timer_1();
-	//OCR2B=SERVO_0_OPEN;
 }
 
 bool checkServo_0_ForMoving() {
