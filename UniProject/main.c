@@ -91,7 +91,11 @@ void decodeCommands(volatile unsigned char commands[])
 			sscanf(tempBuf, "%d", &extractedValue);
 			//send_int_Uart(extractedValue);
 			RPM_1.setRPM = extractedValue;
-			//send_int_Uart();
+			for (int tempBufCount=0; tempBufCount<10; tempBufCount++){
+				tempBuf[tempBufCount] = NULL;
+			}
+			extractedValue = 0;
+			//send_int_Uart(RPM_1.setRPM);
 			//TransmitString(commands);
 			//extractValue(*commands++);
 		}
@@ -306,7 +310,7 @@ ISR(TIMER0_OVF_vect){
 		//TransmitString("CON");
 		Timer5_1.seconds = 0;
 		if(RPM_1.setRPM <= 10 && RPM_1.currentRPM != 0){
-			send_int_Uart("COM");
+			TransmitString("COM");
 			setPwm(0);
 			RPM_1.currentRPM = 0;
 			PWM4C.pwmValue = 0;
